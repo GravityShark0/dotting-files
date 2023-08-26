@@ -1,0 +1,5 @@
+[default_view]
+
+keymap = [
+  { keys = ["g", "m"], command = "cd /media/" },
+]
