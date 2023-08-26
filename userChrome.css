@@ -1,0 +1,5 @@
+#TabsToolbar {visibility: collapse !important;}
+#sidebar-header {visibility: collapse !important;}
+#sidebar-splitter {visibility: collapse !important;}
+
+#content browser{margin-right:-14px!important;margin-bottom:-14px!important;overflow-y:scroll;overflow-x:hidden;}
