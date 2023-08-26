@@ -15,7 +15,8 @@ local naughty = require("naughty")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
-require("awful.hotkeys_popup.keys")
+-- require("awful.hotkeys_popup.keys")
+local net_widgets = require("net_widgets")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -92,29 +93,59 @@ awful.layout.layouts = {
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
-myawesomemenu = {
-   { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-   { "manual", terminal .. " -e man awesome" },
-   { "edit config", editor_cmd .. " " .. awesome.conffile },
-   { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end },
-}
-
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
-                                  }
-                        })
-
-mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
+-- myawesomemenu = {
+--    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
+--    { "manual", terminal .. " -e man awesome" },
+--    { "edit config", editor_cmd .. " " .. awesome.conffile },
+--    { "restart", awesome.restart },
+--    { "quit", function() awesome.quit() end },
+-- }
+--
+-- mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+--                                     { "open terminal", terminal }
+--                                   }
+--                         })
+--
+-- mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
+--                                      menu = mymainmenu })
 
 
 -- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
+-- mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
+local calendar_widget = require("calendar-widget.calendar")
+-- ...
+-- Create a textclock widget
 mytextclock = wibox.widget.textclock()
+-- default
+-- local cw = calendar_widget()
+-- or customized
+local cw = calendar_widget({
+    theme = 'outrun',
+    placement = 'top_right',
+    start_sunday = true,
+    radius = 8,
+-- with customized next/previous (see table above)
+    previous_month_button = 1,
+    next_month_button = 3,
+})
+
+net_wired = net_widgets.indicator({interface="eth0"})
+net_wireless = net_widgets.wireless({
+    interface="wlan0",
+    onclick = terminal.." -e doas wpa_cli"})
+-- net_wireless = net_widgets.wired({interface="eth0"})
+
+
+
+mytextclock:connect_signal("button::press",
+    function(_, _, _, button)
+        if button == 1 then cw.toggle()
+        elseif button == 3 then awful.spawn(terminal.." -e syncclock")
+        end
+    end)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -210,15 +241,17 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            mylauncher,
+            -- mylauncher,
             s.mytaglist,
             s.mypromptbox,
         },
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
+            -- mykeyboardlayout,
             wibox.widget.systray(),
+            net_wired,
+            net_wireless,
             mytextclock,
             s.mylayoutbox,
         },
@@ -227,11 +260,11 @@ end)
 -- }}}
 
 -- {{{ Mouse bindings
-root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end)
-    -- awful.button({ }, 4, awful.tag.viewnext),
-    -- awful.button({ }, 5, awful.tag.viewprev)
-))
+-- root.buttons(gears.table.join(
+--     -- awful.button({ }, 3, function () mymainmenu:toggle() end)
+--     -- awful.button({ }, 4, awful.tag.viewnext),
+--     -- awful.button({ }, 5, awful.tag.viewprev)
+-- ))
 
 clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c)
@@ -287,7 +320,7 @@ globalkeys = gears.table.join(
           {description = "open dmenu launcher", group = "launcher"}),
     awful.key({ modkey, "Shift" }, "w", function () awful.spawn("rofi -show drun") end,
           {description = "open rofi desktop launcher", group = "launcher"}),
-    awful.key({ modkey, "Shift" }, "s", function () awful.spawn.with_shell("flameshot gui && pkill flameshot") end,
+    awful.key({ modkey, "Shift" }, "s", function () awful.spawn("flameshot gui") end,
           {description = "open flameshot", group = "launcher"}),
     awful.key({ modkey }, "r", function () awful.spawn("mercury-browser") end,
           {description = "open default browser", group = "launcher"}),
@@ -415,6 +448,21 @@ local function resize_client(c, direction)
    end
 end
 
+local function move_client(c, direction)
+   if awful.layout.get(mouse.screen) == awful.layout.suit.floating or (c and c.floating) then
+      if direction == "down" then
+         c:relative_move(0, -floating_resize_amount, 0, 0)
+      elseif direction == "up" then
+         c:relative_move(0, floating_resize_amount, 0, 0)
+      elseif direction == "left" then
+         c:relative_move(-floating_resize_amount, 0, 0, 0)
+      elseif direction == "right" then
+         c:relative_move(floating_resize_amount, 0, 0, 0)
+      end
+   else
+      awful.client.swap.bydirection(direction, c.focus)
+   end
+end
 
 
 clientkeys = gears.table.join(
@@ -464,19 +512,28 @@ clientkeys = gears.table.join(
     --     end ,
     --     {description = "(un)maximize horizontally", group = "client"})
 
+
+    -- Move CLient in given direction
+
+
     -- Resize client in given direction
-
-
-
     awful.key({ modkey, "Ctrl", "Mod1" }, "h",     function (c) resize_client(c, "left") end,
               {description = "increase client width factor", group = "client"}),
-    awful.key({ modkey, "Ctrl", "Mod1" }, "j",     function (c) resize_client(c, "up") end,
+    awful.key({ modkey, "Ctrl", "Mod1" }, "j",     function (c) resize_client(c, "down") end,
               {description = "decrease client width factor", group = "client"}),
-    awful.key({ modkey, "Ctrl", "Mod1" }, "k",     function (c) resize_client(c, "down") end,
+    awful.key({ modkey, "Ctrl", "Mod1" }, "k",     function (c) resize_client(c, "up") end,
               {description = "increase client width factor", group = "client"}),
     awful.key({ modkey, "Ctrl", "Mod1" }, "l",     function (c) resize_client(c, "right") end,
-              {description = "decrease client width factor", group = "client"})
+              {description = "decrease client width factor", group = "client"}),
 
+    awful.key({ modkey, "Shift", "Mod1" }, "h",     function (c) move_client(c, "left") end,
+              {description = "increase client width factor", group = "client"}),
+    awful.key({ modkey, "Shift", "Mod1" }, "j",     function (c) move_client(c, "down") end,
+              {description = "decrease client width factor", group = "client"}),
+    awful.key({ modkey, "Shift", "Mod1" }, "k",     function (c) move_client(c, "up") end,
+              {description = "increase client width factor", group = "client"}),
+    awful.key({ modkey, "Shift", "Mod1" }, "l",     function (c) move_client(c, "right") end,
+              {description = "decrease client width factor", group = "client"})
 )
 -- }}}
 -- Tags{{{
@@ -590,84 +647,4 @@ awful.rules.rules = {
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
 }
--- }}}
-
--- {{{ Signals
--- Signal function to execute when a new client appears.
-client.connect_signal("manage", function (c)
-    -- Set the windows at the slave,
-    -- i.e. put it at the end of others instead of setting it master.
-    -- if not awesome.startup then awful.client.setslave(c) end
-
-    if not awesome.startup then awful.client.setslave(c) end
-
-    if awesome.startup
-      and not c.size_hints.user_position
-      and not c.size_hints.program_position then
-        -- Prevent clients from being unreachable after screen count changes.
-        awful.placement.no_offscreen(c)
-    end
-end)
-
--- Add a titlebar if titlebars_enabled is set to true in the rules.
-client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({ }, 1, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ }, 3, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.resize(c)
-        end)
-    )
-
-    awful.titlebar(c) : setup {
-        { -- Left
-            awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
-            layout  = wibox.layout.fixed.horizontal
-        },
-        { -- Middle
-            { -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
-            },
-            buttons = buttons,
-            layout  = wibox.layout.flex.horizontal
-        },
-        { -- Right
-            awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.maximizedbutton(c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
-            awful.titlebar.widget.closebutton    (c),
-            layout = wibox.layout.fixed.horizontal()
-        },
-        layout = wibox.layout.align.horizontal
-    }
-end)
-
--- Enable sloppy focus, so that focus follows mouse.
-client.connect_signal("mouse::enter", function(c)
-    c:emit_signal("request::activate", "mouse_enter", {raise = false})
-end)
-
-client.connect_signal("property::floating", function(c)
-    if c.floating then
-        c.ontop = true
-    else
-        c.ontop = false
-    end
-end)
-
-client.connect_signal("property::maximized", function(c)
-	if c.maximized then
-		c.maximized = false
-	end
-end)
-
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
