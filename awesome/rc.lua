@@ -71,12 +71,13 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {    
+    -- awful.layout.suit.spiral.dwindle,
     awful.layout.suit.tile,
+    awful.layout.suit.spiral,
     awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
     awful.layout.suit.tile.top,
-    -- awful.layout.suit.spiral,
-    -- awful.layout.suit.spiral.dwindle,
+
     awful.layout.suit.floating,
     -- awful.layout.suit.fair,
     -- awful.layout.suit.fair.horizontal,
@@ -92,6 +93,8 @@ awful.layout.layouts = {
 -- }}}
 
 -- {{{ Menu
+
+-- {{{ Launcher Widget
 -- Create a launcher widget and a main menu
 -- myawesomemenu = {
 --    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
@@ -108,15 +111,16 @@ awful.layout.layouts = {
 --
 -- mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 --                                      menu = mymainmenu })
-
+--
 
 -- Keyboard map indicator and switcher
 -- mykeyboardlayout = awful.widget.keyboardlayout()
+-- }}}
 
 -- {{{ Wibar
 -- Create a textclock widget
-local calendar_widget = require("calendar-widget.calendar")
--- ...
+local calendar_widget = require("awesome-wm-widgets.calendar-widget.calendar")
+
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 -- default
@@ -146,6 +150,10 @@ mytextclock:connect_signal("button::press",
         elseif button == 3 then awful.spawn(terminal.." -e syncclock")
         end
     end)
+
+
+
+
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -250,8 +258,8 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             -- mykeyboardlayout,
             wibox.widget.systray(),
-            net_wired,
             net_wireless,
+            net_wired,
             mytextclock,
             s.mylayoutbox,
         },
@@ -264,7 +272,7 @@ end)
 --     -- awful.button({ }, 3, function () mymainmenu:toggle() end)
 --     -- awful.button({ }, 4, awful.tag.viewnext),
 --     -- awful.button({ }, 5, awful.tag.viewprev)
--- ))
+-- )
 
 clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c)
@@ -418,6 +426,7 @@ globalkeys = gears.table.join(
                   }
               end,
               {description = "lua execute prompt", group = "awesome"})
+
 )
 -- }}}
 -- Client{{{
@@ -647,4 +656,86 @@ awful.rules.rules = {
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
 }
+
+-- {{{ Signals
+-- Signal function to execute when a new client appears.
+client.connect_signal("manage", function (c)
+    -- Set the windows at the slave,
+    -- i.e. put it at the end of others instead of setting it master.
+    -- if not awesome.startup then awful.client.setslave(c) end
+
+    if not awesome.startup then awful.client.setslave(c) end
+
+    if awesome.startup
+      and not c.size_hints.user_position
+      and not c.size_hints.program_position then
+        -- Prevent clients from being unreachable after screen count changes.
+        awful.placement.no_offscreen(c)
+    end
+end)
+
+-- Add a titlebar if titlebars_enabled is set to true in the rules.
+client.connect_signal("request::titlebars", function(c)
+    -- buttons for the titlebar
+    local buttons = gears.table.join(
+        awful.button({ }, 1, function()
+            c:emit_signal("request::activate", "titlebar", {raise = true})
+            awful.mouse.client.move(c)
+        end),
+        awful.button({ }, 3, function()
+            c:emit_signal("request::activate", "titlebar", {raise = true})
+            awful.mouse.client.resize(c)
+        end)
+    )
+
+    awful.titlebar(c) : setup {
+        { -- Left
+            awful.titlebar.widget.iconwidget(c),
+            buttons = buttons,
+            layout  = wibox.layout.fixed.horizontal
+        },
+        { -- Middle
+            { -- Title
+                align  = "center",
+                widget = awful.titlebar.widget.titlewidget(c)
+            },
+            buttons = buttons,
+            layout  = wibox.layout.flex.horizontal
+        },
+        { -- Right
+            awful.titlebar.widget.floatingbutton (c),
+            awful.titlebar.widget.maximizedbutton(c),
+            awful.titlebar.widget.stickybutton   (c),
+            awful.titlebar.widget.ontopbutton    (c),
+            awful.titlebar.widget.closebutton    (c),
+            layout = wibox.layout.fixed.horizontal()
+        },
+        layout = wibox.layout.align.horizontal
+    }
+end)
+
+-- Enable sloppy focus, so that focus follows mouse.
+client.connect_signal("mouse::enter", function(c)
+    c:emit_signal("request::activate", "mouse_enter", {raise = false})
+end)
+
+client.connect_signal("property::floating", function(c)
+    if c.floating then
+        c.ontop = true
+    else
+        c.ontop = false
+    end
+end)
+
+client.connect_signal("property::maximized", function(c)
+	if c.maximized then
+		c.maximized = false
+	end
+end)
+
+client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+-- }}}
+
+
 -- }}}

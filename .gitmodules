@@ -1,0 +1,12 @@
+[submodule "awesome/awesome/awesome-wm-widgets"]
+	path = awesome/awesome/awesome-wm-widgets
+	url = https://github.com/streetturtle/awesome-wm-widgets
+[submodule "awesome/awesome-wm-widgets"]
+	path = awesome/awesome-wm-widgets
+	url = https://github.com/streetturtle/awesome-wm-widgets
+[submodule "awesome/net_widgets"]
+	path = awesome/net_widgets
+	url = https://github.com/pltanton/net_widgets
+[submodule "awesome/volume-control"]
+	path = awesome/volume-control
+	url = https://github.com/deficient/volume-control.git

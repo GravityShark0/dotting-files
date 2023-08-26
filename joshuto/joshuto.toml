@@ -5,7 +5,7 @@ scroll_offset = 8
 xdg_open = true
 
 # Fork xdg_open so you can continue using joshuto with application open
-xdg_open_fork = false
+xdg_open_fork = true
 
 # Use system trash can instead of permanently removing files
 use_trash = true
