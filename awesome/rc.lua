@@ -53,8 +53,8 @@ beautiful.init("/home/gravityshark/.config/awesome/grav.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "st"
-editor = os.getenv("EDITOR") or "nvim"
-editor_cmd = terminal .. " -e " .. editor
+-- editor = os.getenv("EDITOR") or "nvim"
+-- editor_cmd = terminal .. " -e " .. editor
 
 beautiful.wallpaper = "/home/gravityshark/Pictures/Wallpapers/4k.png"
 
@@ -136,6 +136,7 @@ local cw = calendar_widget({
     next_month_button = 3,
 })
 
+-- Wired/Wireless widget on tab
 net_wired = net_widgets.indicator({interface="eth0"})
 net_wireless = net_widgets.wireless({
     interface="wlan0",
@@ -330,7 +331,7 @@ globalkeys = gears.table.join(
           {description = "open rofi desktop launcher", group = "launcher"}),
     awful.key({ modkey, "Shift" }, "s", function () awful.spawn("flameshot gui") end,
           {description = "open flameshot", group = "launcher"}),
-    awful.key({ modkey }, "r", function () awful.spawn("mercury-browser") end,
+    awful.key({ modkey }, "r", function () awful.spawn("firefox") end,
           {description = "open default browser", group = "launcher"}),
 
 
@@ -477,10 +478,18 @@ end
 clientkeys = gears.table.join(
     awful.key({ modkey,           }, "f",
         function (c)
-            c.fullscreen = not c.fullscreen
+            if c.floating then
+                c.floating = true
+                c.fullscreen = not c.fullscreen
+            elseif not c.floating then
+                c.floating = false
+                c.fullscreen = not c.fullscreen
+            else
+                c.fullscreen = not c.fullscreen
+            end
             c:raise()
         end,
-        {description = "toggle fullscreen", group = "client"}),
+    {description = "toggle fullscreen", group = "client"}),
     awful.key({ modkey }, "c",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey }, "space",  awful.client.floating.toggle                     ,
@@ -506,12 +515,14 @@ clientkeys = gears.table.join(
     --     function (c)
     --         c.maximized = not c.maximized
     --         c:raise()
+    --         awful.rules.rules = {properties = { border_width = 0}}
     --     end ,
     --     {description = "(un)maximize", group = "client"}),
     -- awful.key({ modkey, "Control" }, "m",
     --     function (c)
     --         c.maximized_vertical = not c.maximized_vertical
     --         c:raise()
+    --         awful.rules.rules = {properties = { border_width = beautiful.border_width}}
     --     end ,
     --     {description = "(un)maximize vertically", group = "client"}),
     -- awful.key({ modkey, "Shift"   }, "m",
@@ -519,7 +530,7 @@ clientkeys = gears.table.join(
     --         c.maximized_horizontal = not c.maximized_horizontal
     --         c:raise()
     --     end ,
-    --     {description = "(un)maximize horizontally", group = "client"})
+    --     {description = "(un)maximize horizontally", group = "client"}),
 
 
     -- Move CLient in given direction
@@ -612,8 +623,16 @@ awful.rules.rules = {
                      keys = clientkeys,
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
-     }
+                     placement = awful.placement.no_overlap+awful.placement.no_offscreen,
+                     maximized = false
+     },
+     {
+         rule = { maximized = true },
+         properties = {
+             maximized = true,
+             floating = false,
+         },
+ }
     },
 
     -- Floating clients.
@@ -675,50 +694,51 @@ client.connect_signal("manage", function (c)
 end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
-client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({ }, 1, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ }, 3, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.resize(c)
-        end)
-    )
-
-    awful.titlebar(c) : setup {
-        { -- Left
-            awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
-            layout  = wibox.layout.fixed.horizontal
-        },
-        { -- Middle
-            { -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
-            },
-            buttons = buttons,
-            layout  = wibox.layout.flex.horizontal
-        },
-        { -- Right
-            awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.maximizedbutton(c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
-            awful.titlebar.widget.closebutton    (c),
-            layout = wibox.layout.fixed.horizontal()
-        },
-        layout = wibox.layout.align.horizontal
-    }
-end)
+-- client.connect_signal("request::titlebars", function(c)
+--     -- buttons for the titlebar
+--     local buttons = gears.table.join(
+--         awful.button({ }, 1, function()
+--             c:emit_signal("request::activate", "titlebar", {raise = true})
+--             awful.mouse.client.move(c)
+--         end),
+--         awful.button({ }, 3, function()
+--             c:emit_signal("request::activate", "titlebar", {raise = true})
+--             awful.mouse.client.resize(c)
+--         end)
+--     )
+--
+--     awful.titlebar(c) : setup {
+--         { -- Left
+--             awful.titlebar.widget.iconwidget(c),
+--             buttons = buttons,
+--             layout  = wibox.layout.fixed.horizontal
+--         },
+--         { -- Middle
+--             { -- Title
+--                 align  = "center",
+--                 widget = awful.titlebar.widget.titlewidget(c)
+--             },
+--             buttons = buttons,
+--             layout  = wibox.layout.flex.horizontal
+--         },
+--         { -- Right
+--             awful.titlebar.widget.floatingbutton (c),
+--             awful.titlebar.widget.maximizedbutton(c),
+--             awful.titlebar.widget.stickybutton   (c),
+--             awful.titlebar.widget.ontopbutton    (c),
+--             awful.titlebar.widget.closebutton    (c),
+--             layout = wibox.layout.fixed.horizontal()
+--         },
+--         layout = wibox.layout.align.horizontal
+--     }
+-- end)
 
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
+-- All floating are on top
 client.connect_signal("property::floating", function(c)
     if c.floating then
         c.ontop = true
@@ -727,15 +747,20 @@ client.connect_signal("property::floating", function(c)
     end
 end)
 
+-- Disable Mixmization
 client.connect_signal("property::maximized", function(c)
 	if c.maximized then
 		c.maximized = false
 	end
 end)
 
+-- Focus border color
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
 
 -- }}}
+
+
+-- awful.spawn("volumeicon")
