@@ -56,7 +56,7 @@ terminal = "st"
 -- editor = os.getenv("EDITOR") or "nvim"
 -- editor_cmd = terminal .. " -e " .. editor
 
-beautiful.wallpaper = "/home/gravityshark/Pictures/Wallpapers/4k.png"
+beautiful.wallpaper = "/home/gravityshark/Media/Wallpapers/4k.png"
 
 -- Gaps
 -- beautiful.useless_gap = 1
@@ -216,7 +216,8 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    -- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    awful.tag({ "1", "2", "3", "4", "5"}, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -430,7 +431,7 @@ globalkeys = gears.table.join(
 
 )
 -- }}}
--- Client{{{
+-- Client{{
 local floating_resize_amount = 20
 local tiling_resize_factor = 0.05
 
@@ -447,9 +448,9 @@ local function resize_client(c, direction)
       end
    else
       if direction == "up" then
-         awful.client.incwfact(-tiling_resize_factor)
+         awful.client.incwfact(-tiling_resize_factor * 2)
       elseif direction == "down" then
-         awful.client.incwfact(tiling_resize_factor)
+         awful.client.incwfact(tiling_resize_factor * 2)
       elseif direction == "left" then
          awful.tag.incmwfact(-tiling_resize_factor)
       elseif direction == "right" then
@@ -460,9 +461,9 @@ end
 
 local function move_client(c, direction)
    if awful.layout.get(mouse.screen) == awful.layout.suit.floating or (c and c.floating) then
-      if direction == "down" then
+      if direction == "up" then
          c:relative_move(0, -floating_resize_amount, 0, 0)
-      elseif direction == "up" then
+      elseif direction == "down" then
          c:relative_move(0, floating_resize_amount, 0, 0)
       elseif direction == "left" then
          c:relative_move(-floating_resize_amount, 0, 0, 0)
