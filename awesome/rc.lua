@@ -321,7 +321,7 @@ globalkeys = gears.table.join(
                   myscreen = awful.screen.focused()
                   myscreen.mywibox.visible = not myscreen.mywibox.visible
               end,
-              {description = "toggle statusbar"}
+              {description = "toggle statusbar", group = "awesome"}
     ),
 
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
