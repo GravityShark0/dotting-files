@@ -453,7 +453,7 @@ globalkeys = gears.table.join(
 )
 -- }}}
 -- Client{{
-local floating_resize_amount = 20
+local floating_resize_amount = 72
 local tiling_resize_factor = 0.05
 
 local function resize_client(c, direction)
@@ -847,8 +847,35 @@ client.connect_signal("unfocus", function(c)
         c.border_color = beautiful.border_normal
     end
 end)
-
-
+--
+-- -- Client snapback whenever past screen edges
+-- local function snap_back(c)
+--     local workarea = screen[c.screen].workarea
+--     local geometry = c:geometry()
+--
+--     if geometry.x + geometry.width > workarea.width then
+--         c.x = workarea.width - geometry.width
+--     end
+--
+--     if geometry.x < workarea.x then
+--         c.x = workarea.x
+--     end
+--
+--     if geometry.y + geometry.height > workarea.height then
+--         c.y = workarea.height - geometry.height
+--     end
+--
+--     if geometry.y < workarea.y then
+--         c.y = workarea.y
+--     end
+--
+--     c:geometry(c)
+-- end
+--
+-- -- Signal handler to snap windows back when moved or resized
+-- client.connect_signal("request::geometry", function(c)
+--     snap_back(c)
+-- end)
 
 -- -- Spawned windows should go to the currently viewed tag
 -- client.connect_signal("manage", function(c)
