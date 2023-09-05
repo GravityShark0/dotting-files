@@ -4,6 +4,7 @@ dash ~/.screenlayout/single.sh
 
 artix-pipewire-launcher &
 
+emacs --daemon &
 # xset -dpms &
 picom &
 # qownnotes &

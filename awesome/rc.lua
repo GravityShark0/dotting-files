@@ -889,5 +889,24 @@ end)
 
 
 -- }}}
+--         local screen = awful.screen.focused()
+--         local tag = screen.tags[6]
 
 awful.spawn.with_shell("dash $HOME/.xprofile")
+awful.spawn("emacsclient -c -a 'emacs'")
+
+
+-- awful.spawn("st -e htop", {    floating  = true,
+--     tag       = tag,
+--     placement = awful.placement.bottom_right, })
+-- awful.spawn("urxvt -e maxima -name CALCULATOR", {
+--     floating  = true,
+--     tag       = mouse.screen.selected_tag,
+--     placement = awful.placement.bottom_right,
+-- })
+                    -- if client.focus.first_tag.name == "6" then
+-- awful.spawn("st", false, function(c)
+--     -- Move the newly spawned client to tag 6
+--     c:move_to_tag(screen[1].tags[6])
+-- end)
+
