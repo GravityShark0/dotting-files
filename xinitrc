@@ -5,10 +5,9 @@ dash ~/.screenlayout/single.sh
 artix-pipewire-launcher &
 
 # xset -dpms &
-dash ~/.xprofile &
 picom &
 # qownnotes &
 # st -e nvim ~/Notes/index.norg &
 # xscreensaver --no-splash &
-
+# dash ~/.xprofile &
 exec dbus-launch --exit-with-session awesome

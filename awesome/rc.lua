@@ -47,9 +47,8 @@ end
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init("/home/gravityshark/.config/awesome/grav.lua")
 -- beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
-
-
-
+local bling = require("bling")
+bling.module.flash_focus.enable()
 
 -- This is used later as the default terminal and editor to run.
 terminal = "st"
@@ -613,27 +612,27 @@ for i = 1, 9 do
     globalkeys = gears.table.join(globalkeys,
         -- View tag only.
         awful.key({ modkey }, "#" .. i + 9,
-                  function ()
-                        local screen = awful.screen.focused()
-                        local tag = screen.tags[i]
-                        if tag then
-                           tag:view_only()
-                        end
-                    end,
-        --  function ()
-        --     local screen = awful.screen.focused()
-        --     local tag = screen.tags[i]
-        --     local scratch = screen.tags[6]
-        --     if tag then
-        --         if scratch.selected then
-        --         -- if scratch.selected and awful.screen.focused().selected_tag ~= "6" then
-        --             tag:view_only()
-        --             awful.tag.viewtoggle(scratch)
-        --         else
-        --             tag:view_only()
-        --         end
-        --     end
-        -- end,                -- end,
+                  -- function ()
+                  --       local screen = awful.screen.focused()
+                  --       local tag = screen.tags[i]
+                  --       if tag then
+                  --          tag:view_only()
+                  --       end
+                  --   end,
+         function ()
+            local screen = awful.screen.focused()
+            local tag = screen.tags[i]
+            local scratch = screen.tags[6]
+            if tag then
+                if scratch.selected then
+                -- if scratch.selected and awful.screen.focused().selected_tag ~= "6" then
+                    tag:view_only()
+                    awful.tag.viewtoggle(scratch)
+                else
+                    tag:view_only()
+                end
+            end
+        end,                -- end,
                   {description = "view tag #"..i, group = "tag"}),
         -- Toggle tag display.
         awful.key({ modkey, "Control" }, "#" .. i + 9,
@@ -687,7 +686,11 @@ awful.rules.rules = {
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
                      placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-                     maximized = false
+                     maximized = false,
+                     -- tag = awful.screen.selected_tag
+                    tag = function(c)
+                        return c.screen.selected_tag
+                    end,
      },
 
     {
@@ -829,15 +832,35 @@ client.connect_signal("property::maximized", function(c)
 end)
 
 -- Focus border color
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+client.connect_signal("focus", function(c)
+    if c.first_tag and c.first_tag.name == "6" then
+        c.border_color = beautiful.border_scratch
+    else
+        c.border_color = beautiful.border_focus
+    end
+end)
+
 client.connect_signal("unfocus", function(c)
-    if c.first_tag.name == "6" then
+    if c.first_tag and c.first_tag.name == "6" then
         c.border_color = beautiful.border_scratch
     else
         c.border_color = beautiful.border_normal
     end
 end)
+
+
+
+-- -- Spawned windows should go to the currently viewed tag
+-- client.connect_signal("manage", function(c)
+--     local current_tag = awful.tag.selected(c.screen)
+--     if current_tag then
+--         c:move_to_tag(current_tag)
+--     end
+-- end)
+
 -- }}}
 
 
 -- }}}
+
+awful.spawn.with_shell("dash $HOME/.xprofile")
