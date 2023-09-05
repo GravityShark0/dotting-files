@@ -1,6 +1,7 @@
 #!/bin/dash
 
 # feh Pictures/Wallpapers/purp1.jpg --bg-scale &
+feh ~/Media/Wallpapers/4k.png --bg-scale &
 # xmodmap ~/.keymaps/tarmak_2b_dh.xmodmap &
 xrdb ~/.config/suckless/mocha && killall -USR1 st &
 pkill volumeicon; volumeicon &

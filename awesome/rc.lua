@@ -56,7 +56,7 @@ terminal = "st"
 -- editor = os.getenv("EDITOR") or "nvim"
 -- editor_cmd = terminal .. " -e " .. editor
 
-beautiful.wallpaper = "/home/gravityshark/Pictures/Wallpapers/4k.png"
+-- beautiful.wallpaper = "/home/gravityshark/Pictures/Wallpapers/4k.png"
 
 -- Gaps
 -- beautiful.useless_gap = 1
@@ -70,7 +70,7 @@ beautiful.wallpaper = "/home/gravityshark/Pictures/Wallpapers/4k.png"
 modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
-awful.layout.layouts = {    
+awful.layout.layouts = {
     -- awful.layout.suit.spiral.dwindle,
     awful.layout.suit.spiral,
     awful.layout.suit.tile.bottom,
@@ -310,7 +310,7 @@ clientbuttons = gears.table.join(
 -- {{{ Key bindings
 -- Global{{{
 globalkeys = gears.table.join(
-    awful.key({modkey},"`" , function(c)
+    awful.key({modkey},"`" , function()
         local screen = awful.screen.focused()
         local tag = screen.tags[6]
         if tag then
