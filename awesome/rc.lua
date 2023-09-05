@@ -56,7 +56,7 @@ terminal = "st"
 -- editor = os.getenv("EDITOR") or "nvim"
 -- editor_cmd = terminal .. " -e " .. editor
 
-beautiful.wallpaper = "/home/gravityshark/Media/Wallpapers/4k.png"
+beautiful.wallpaper = "/home/gravityshark/Pictures/Wallpapers/4k.png"
 
 -- Gaps
 -- beautiful.useless_gap = 1
@@ -76,7 +76,6 @@ awful.layout.layouts = {
     awful.layout.suit.tile.bottom,
     awful.layout.suit.tile,
     awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
     awful.layout.suit.tile.top,
 
     awful.layout.suit.floating,
@@ -219,7 +218,9 @@ awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     -- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
     awful.tag({ "1", "2", "3", "4", "5"}, s, awful.layout.layouts[1])
+    -- awful.tag("6", s, awful.layout.suit.floating)
 
+    awful.tag.add("6",{s,layout = awful.layout.suit.floating})
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
@@ -230,13 +231,26 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+
+    local original_taglist_label = awful.widget.taglist.taglist_label
+    function awful.widget.taglist.taglist_label(tag, args, tb)
+      local text, bg, bg_image, icon, other_args =
+        original_taglist_label(tag, args, tb)
+
+      -- Hide tags 11 and 12
+      if tag.index == 6 or tag.index == 12 then
+          text = ""
+      end
+
+      return text, bg, bg_image, icon, other_args
+    end
+
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.all,
         buttons = taglist_buttons
     }
-
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
@@ -296,6 +310,13 @@ clientbuttons = gears.table.join(
 -- {{{ Key bindings
 -- Global{{{
 globalkeys = gears.table.join(
+    awful.key({modkey},"`" , function(c)
+        local screen = awful.screen.focused()
+        local tag = screen.tags[6]
+        if tag then
+            awful.tag.viewtoggle(tag)
+    end
+    end,{description = "toggle scratchpad",group = "client"}),
     awful.key({ modkey }, "b",
               function ()
                   myscreen = awful.screen.focused()
@@ -449,9 +470,9 @@ local function resize_client(c, direction)
       end
    else
       if direction == "up" then
-         awful.client.incwfact(-tiling_resize_factor * 2)
+         awful.client.incwfact(-tiling_resize_factor)
       elseif direction == "down" then
-         awful.client.incwfact(tiling_resize_factor * 2)
+         awful.client.incwfact(tiling_resize_factor)
       elseif direction == "left" then
          awful.tag.incmwfact(-tiling_resize_factor)
       elseif direction == "right" then
@@ -478,6 +499,31 @@ end
 
 
 clientkeys = gears.table.join(
+    awful.key({modkey, "Shift"},"`" , function(c)
+        c.floating = true
+			if client.focus then
+				local tag = client.focus.screen.tags[6]
+				if tag then
+                    local screen = awful.screen.focused()
+                    local scratch = screen.tags[6]
+                    if client.focus.first_tag.name == "6" then
+                        client.focus:move_to_tag(awful.screen.focused().selected_tag)
+
+                        if scratch.selected then
+                            awful.tag.viewtoggle(scratch)
+                        end
+                    else
+                        client.focus:move_to_tag(tag)
+
+                        -- Scratchpad
+                        if not scratch.selected then
+                            awful.tag.viewtoggle(scratch)
+                        end
+                    end
+                end
+			end
+    end,{description = "toggle client to scratchpad",group = "client"}),
+
     awful.key({ modkey,           }, "f",
         function (c)
             if c.floating then
@@ -558,6 +604,7 @@ clientkeys = gears.table.join(
               {description = "decrease client width factor", group = "client"})
 )
 -- }}}
+
 -- Tags{{{
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it work on any keyboard layout.
@@ -572,7 +619,21 @@ for i = 1, 9 do
                         if tag then
                            tag:view_only()
                         end
-                  end,
+                    end,
+        --  function ()
+        --     local screen = awful.screen.focused()
+        --     local tag = screen.tags[i]
+        --     local scratch = screen.tags[6]
+        --     if tag then
+        --         if scratch.selected then
+        --         -- if scratch.selected and awful.screen.focused().selected_tag ~= "6" then
+        --             tag:view_only()
+        --             awful.tag.viewtoggle(scratch)
+        --         else
+        --             tag:view_only()
+        --         end
+        --     end
+        -- end,                -- end,
                   {description = "view tag #"..i, group = "tag"}),
         -- Toggle tag display.
         awful.key({ modkey, "Control" }, "#" .. i + 9,
@@ -628,15 +689,24 @@ awful.rules.rules = {
                      placement = awful.placement.no_overlap+awful.placement.no_offscreen,
                      maximized = false
      },
-     {
+
+    {
          rule = { maximized = true },
          properties = {
              maximized = true,
              floating = false,
          },
- }
     },
 
+    },
+    -- Scratchpad Rules
+    -- {
+    --     rule = { tag = "6" },
+    --     properties = {
+    --         border_color = beautiful.border_focus,
+    --         -- any other properties you want to set
+    --     }
+    -- },
     -- Floating clients.
     { rule_any = {
         instance = {
@@ -672,10 +742,12 @@ awful.rules.rules = {
     { rule_any = {type = { "normal", "dialog" }
       }, properties = { titlebars_enabled = false }
     },
+    -- { rule = { tag = ""},
+    --     properties = { sticky = true }},
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
+    { rule = { role = "browser" },
+      properties = { tag = "5", } },
 }
 
 -- {{{ Signals
@@ -758,11 +830,14 @@ end)
 
 -- Focus border color
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+client.connect_signal("unfocus", function(c)
+    if c.first_tag.name == "6" then
+        c.border_color = beautiful.border_scratch
+    else
+        c.border_color = beautiful.border_normal
+    end
+end)
 -- }}}
 
 
 -- }}}
-
-
--- awful.spawn("volumeicon")

@@ -8,7 +8,7 @@ artix-pipewire-launcher &
 dash ~/.xprofile &
 picom &
 # qownnotes &
-st -e nvim ~/Notes/index.norg &
+# st -e nvim ~/Notes/index.norg &
 # xscreensaver --no-splash &
 
 exec dbus-launch --exit-with-session awesome

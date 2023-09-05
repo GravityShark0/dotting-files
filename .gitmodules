@@ -10,3 +10,6 @@
 [submodule "awesome/volume-control"]
 	path = awesome/volume-control
 	url = https://github.com/deficient/volume-control.git
+[submodule "awesome/bling"]
+	path = awesome/bling
+	url = https://github.com/BlingCorp/bling.git
