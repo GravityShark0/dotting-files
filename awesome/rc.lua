@@ -893,7 +893,6 @@ end)
 --         local tag = screen.tags[6]
 
 awful.spawn.with_shell("dash $HOME/.xprofile")
-awful.spawn("emacsclient -c -a 'emacs'")
 
 
 -- awful.spawn("st -e htop", {    floating  = true,
