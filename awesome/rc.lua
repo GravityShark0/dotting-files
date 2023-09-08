@@ -1,3 +1,4 @@
+
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
@@ -5,6 +6,7 @@ pcall(require, "luarocks.loader")
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
+
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
@@ -672,6 +674,7 @@ end
 -- Set keys
 root.keys(globalkeys)
 -- }}}
+awful.spawn.with_shell("dash $HOME/.xprofile")
 
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
@@ -892,7 +895,6 @@ end)
 --         local screen = awful.screen.focused()
 --         local tag = screen.tags[6]
 
-awful.spawn.with_shell("dash $HOME/.xprofile")
 
 
 -- awful.spawn("st -e htop", {    floating  = true,
