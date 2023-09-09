@@ -1,6 +1,7 @@
 (emacs --daemon && emacsclient -nc) &
 xrandr --setprovideroutputsource modesetting NVIDIA-0
-xrandr --output HDMI-0 --auto --output eDP-1-1 --auto
+xrandr --auto
+# xrandr --output HDMI-0 --auto --output eDP-1-1 --auto
 # dash ~/.screenlayout/single.sh
 
 artix-pipewire-launcher &
