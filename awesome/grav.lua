@@ -14,7 +14,7 @@ local theme = {}
 theme.font          = "Ubuntu Nerd Font 8"
 
 theme.bg_normal     = "#11111b"
-theme.bg_focus      = "#313244"
+theme.bg_focus      = "#15121b"
 theme.bg_urgent     = "#ff0000"
 theme.bg_minimize   = "#444444"
 theme.bg_systray    = theme.bg_normal
@@ -25,7 +25,7 @@ theme.fg_urgent     = "#ffffff"
 theme.fg_minimize   = "#ffffff"
 
 theme.useless_gap   = dpi(1)
-theme.border_width  = dpi(1)
+theme.border_width  = dpi(2)
 theme.border_normal = "#11111b"
 theme.border_focus  = "#cba6f7"
 theme.border_scratch= "#cda869"
