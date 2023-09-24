@@ -7,8 +7,7 @@ audio_default = [
 ]
 
 image_default = [
-  { command = "feh",
-  fork = true, silent = true },
+  { command = "feh", fork = true, silent = true },
   { command = "qimgv", args = [
     "--",
   ], fork = true, silent = true },
@@ -34,7 +33,7 @@ video_default = [
 ]
 
 text_default = [
-  { command = "nvim" },
+  { command = "nvim" }
   # { command = "gedit", fork = true, silent = true },
   # { command = "bat", args = [
   #   "--paging=always",

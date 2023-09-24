@@ -338,18 +338,31 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
-    awful.key({ modkey,           }, "j",
-        function ()
-            awful.client.focus.byidx( 1)
-        end,
-        {description = "focus next by index", group = "client"}
-    ),
-    awful.key({ modkey,           }, "k",
-        function ()
-            awful.client.focus.byidx(-1)
-        end,
-        {description = "focus previous by index", group = "client"}
-    ),
+    -- awful.key({ modkey,           }, "j",
+    --     function ()
+    --         awful.client.focus.byidx( 1)
+    --     end,
+    --     {description = "focus next by index", group = "client"}
+    -- ),
+    -- awful.key({ modkey,           }, "k",
+    --     function ()
+    --         awful.client.focus.byidx(-1)
+    --     end,
+    --     {description = "focus previous by index", group = "client"}
+    -- ),
+
+    -- Select client in given direction
+    awful.key({ modkey }, "h", function () awful.client.focus.bydirection("left") end,
+        {description = "focus client towards left", group = "client"}),
+    awful.key({ modkey }, "j", function () awful.client.focus.bydirection("down") end,
+        {description = "focus client towards down", group = "client"}),
+    awful.key({ modkey }, "k", function () awful.client.focus.bydirection("up") end,
+        {description = "focus client towards up", group = "client"}),
+    awful.key({ modkey }, "l", function () awful.client.focus.bydirection("right") end,
+        {description = "focus client towards right", group = "client"}),
+
+
+
     -- awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
     --           {description = "show main menu", group = "awesome"}),
     awful.key({ modkey }, "w", function () awful.spawn("dmenu_run_history -l 20") end,
@@ -364,10 +377,10 @@ globalkeys = gears.table.join(
 
 
     -- Layout manipulation
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
-              {description = "swap with next client by index", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
-              {description = "swap with previous client by index", group = "client"}),
+    -- awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+    --           {description = "swap with next client by index", group = "client"}),
+    -- awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
+    --           {description = "swap with previous client by index", group = "client"}),
     awful.key({ modkey, }, ".", function () awful.screen.focus_relative( 1) end,
               {description = "focus the next screen", group = "screen"}),
     awful.key({ modkey, }, ",", function () awful.screen.focus_relative(-1) end,
@@ -384,14 +397,6 @@ globalkeys = gears.table.join(
     --     end,
     --     {description = "go back", group = "client"}),
 
-    awful.key({ modkey, "Mod1"}, "h", function () awful.client.focus.bydirection("left") end,
-        {description = "focus the previous screen", group = "client"}),
-    awful.key({ modkey, "Mod1"}, "j", function () awful.client.focus.bydirection("down") end,
-        {description = "focus the previous screen", group = "client"}),
-    awful.key({ modkey, "Mod1"}, "k", function () awful.client.focus.bydirection("up") end,
-        {description = "focus the previous screen", group = "client"}),
-    awful.key({ modkey, "Mod1"}, "l", function () awful.client.focus.bydirection("right") end,
-        {description = "focus the previous screen", group = "client"}),
 
     -- Standard program
     awful.key({ modkey,           }, "q", function () awful.spawn(terminal) end,
@@ -408,18 +413,18 @@ globalkeys = gears.table.join(
     awful.key({ modkey, "Shift"   }, "Escape", awesome.quit,
               {description = "quit awesome", group = "awesome"}),
 
-    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
-              {description = "increase master width factor", group = "layout"}),
-    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)          end,
-              {description = "decrease master width factor", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1, nil, true) end,
+    -- awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
+    --           {description = "increase master width factor", group = "layout"}),
+    -- awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)          end,
+    --           {description = "decrease master width factor", group = "layout"}),
+    awful.key({ modkey }, "i",     function () awful.tag.incnmaster( 1, nil, true) end,
               {description = "increase the number of master clients", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true) end,
+    awful.key({ modkey }, "o",     function () awful.tag.incnmaster(-1, nil, true) end,
               {description = "decrease the number of master clients", group = "layout"}),
 
-    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1, nil, true)    end,
+    awful.key({ modkey, "Shift" }, "i",     function () awful.tag.incncol( 1, nil, true)    end,
               {description = "increase the number of columns", group = "layout"}),
-    awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
+    awful.key({ modkey, "Shift" }, "o",     function () awful.tag.incncol(-1, nil, true)    end,
               {description = "decrease the number of columns", group = "layout"}),
 
     awful.key({ modkey,           }, "\\", function () awful.layout.inc( 1)                end,
@@ -464,9 +469,9 @@ local tiling_resize_factor = 0.05
 local function resize_client(c, direction)
    if awful.layout.get(mouse.screen) == awful.layout.suit.floating or (c and c.floating) then
       if direction == "up" then
-         c:relative_move(0, 0, 0, -floating_resize_amount)
-      elseif direction == "down" then
          c:relative_move(0, 0, 0, floating_resize_amount)
+      elseif direction == "down" then
+         c:relative_move(0, 0, 0, -floating_resize_amount)
       elseif direction == "left" then
          c:relative_move(0, 0, -floating_resize_amount, 0)
       elseif direction == "right" then
@@ -474,9 +479,9 @@ local function resize_client(c, direction)
       end
    else
       if direction == "up" then
-         awful.client.incwfact(-tiling_resize_factor)
-      elseif direction == "down" then
          awful.client.incwfact(tiling_resize_factor)
+      elseif direction == "down" then
+         awful.client.incwfact(-tiling_resize_factor)
       elseif direction == "left" then
          awful.tag.incmwfact(-tiling_resize_factor)
       elseif direction == "right" then
@@ -585,26 +590,25 @@ clientkeys = gears.table.join(
     --     {description = "(un)maximize horizontally", group = "client"}),
 
 
-    -- Move CLient in given direction
-
 
     -- Resize client in given direction
-    awful.key({ modkey, "Ctrl", "Mod1" }, "h",     function (c) resize_client(c, "left") end,
+    awful.key({ modkey, "Ctrl" }, "h",     function (c) resize_client(c, "left") end,
               {description = "increase client width factor", group = "client"}),
-    awful.key({ modkey, "Ctrl", "Mod1" }, "j",     function (c) resize_client(c, "down") end,
+    awful.key({ modkey, "Ctrl" }, "j",     function (c) resize_client(c, "down") end,
               {description = "decrease client width factor", group = "client"}),
-    awful.key({ modkey, "Ctrl", "Mod1" }, "k",     function (c) resize_client(c, "up") end,
+    awful.key({ modkey, "Ctrl" }, "k",     function (c) resize_client(c, "up") end,
               {description = "increase client width factor", group = "client"}),
-    awful.key({ modkey, "Ctrl", "Mod1" }, "l",     function (c) resize_client(c, "right") end,
+    awful.key({ modkey, "Ctrl" }, "l",     function (c) resize_client(c, "right") end,
               {description = "decrease client width factor", group = "client"}),
 
-    awful.key({ modkey, "Shift", "Mod1" }, "h",     function (c) move_client(c, "left") end,
+    -- Move Client in given direction
+    awful.key({ modkey, "Shift" }, "h",     function (c) move_client(c, "left") end,
               {description = "increase client width factor", group = "client"}),
-    awful.key({ modkey, "Shift", "Mod1" }, "j",     function (c) move_client(c, "down") end,
+    awful.key({ modkey, "Shift" }, "j",     function (c) move_client(c, "down") end,
               {description = "decrease client width factor", group = "client"}),
-    awful.key({ modkey, "Shift", "Mod1" }, "k",     function (c) move_client(c, "up") end,
+    awful.key({ modkey, "Shift" }, "k",     function (c) move_client(c, "up") end,
               {description = "increase client width factor", group = "client"}),
-    awful.key({ modkey, "Shift", "Mod1" }, "l",     function (c) move_client(c, "right") end,
+    awful.key({ modkey, "Shift" }, "l",     function (c) move_client(c, "right") end,
               {description = "decrease client width factor", group = "client"})
 )
 -- }}}
