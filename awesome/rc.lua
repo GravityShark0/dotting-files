@@ -53,7 +53,7 @@ local bling = require("bling")
 bling.module.flash_focus.enable()
 
 -- This is used later as the default terminal and editor to run.
-terminal = "st"
+terminal = "st -e /home/gravityshark/.tmux/plugins/t-smart-tmux-session-manager/bin/t"
 -- editor = os.getenv("EDITOR") or "nvim"
 -- editor_cmd = terminal .. " -e " .. editor
 
@@ -681,7 +681,6 @@ end
 -- Set keys
 root.keys(globalkeys)
 -- }}}
-awful.spawn.with_shell("dash $HOME/.xprofile")
 
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
@@ -918,3 +917,4 @@ end)
 --     c:move_to_tag(screen[1].tags[6])
 -- end)
 
+awful.spawn.with_shell("dash $HOME/.xprofile")
