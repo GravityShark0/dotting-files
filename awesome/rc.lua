@@ -131,7 +131,7 @@ mytextclock = wibox.widget.textclock()
 -- or customized
 local cw = calendar_widget({
     theme = 'outrun',
-    placement = 'top_right',
+    placement = 'bottom_right',
     start_sunday = true,
     radius = 8,
 -- with customized next/previous (see table above)
@@ -140,13 +140,13 @@ local cw = calendar_widget({
 })
 
 -- Wired/Wireless widget on tab
-net_wired = net_widgets.indicator({interface="eth0"})
+net_wired = net_widgets.indicator({interface="eth0",
+    popup_position = "bottom_right" })
 net_wireless = net_widgets.wireless({
     interface="wlan0",
-    onclick = terminal.." -e doas wpa_cli"})
+    popup_position = "bottom_right",
+    onclick = terminal.." -e wpa_gui"})
 -- net_wireless = net_widgets.wired({interface="eth0"})
-
-
 
 mytextclock:connect_signal("button::press",
     function(_, _, _, button)
@@ -154,10 +154,6 @@ mytextclock:connect_signal("button::press",
         elseif button == 3 then awful.spawn(terminal.." -e syncclock")
         end
     end)
-
-
-
-
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
