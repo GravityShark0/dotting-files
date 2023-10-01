@@ -53,7 +53,9 @@ local bling = require("bling")
 bling.module.flash_focus.enable()
 
 -- This is used later as the default terminal and editor to run.
-terminal = "st -e /home/gravityshark/.tmux/plugins/t-smart-tmux-session-manager/bin/t"
+terminal = "st"
+tmuxterminal = "st -e /home/gravityshark/.tmux/plugins/t-smart-tmux-session-manager/bin/t"
+editor = "st -e /home/gravityshark/.bin/jo"
 -- editor = os.getenv("EDITOR") or "nvim"
 -- editor_cmd = terminal .. " -e " .. editor
 
@@ -399,9 +401,9 @@ globalkeys = gears.table.join(
 
 
     -- Standard program
-    awful.key({ modkey,           }, "q", function () awful.spawn(terminal) end,
+    awful.key({ modkey,           }, "q", function () awful.spawn(tmuxterminal) end,
               {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey, "Shift" }, "q", function () awful.spawn(terminal.." -e jo") end,
+    awful.key({ modkey, "Shift" }, "q", function () awful.spawn(editor) end,
               {description = "open a terminal with a file manager", group = "launcher"}),
 
     awful.key({ modkey, "Control" }, "r", awesome.restart,
@@ -681,6 +683,7 @@ end
 -- Set keys
 root.keys(globalkeys)
 -- }}}
+awful.spawn.with_shell("dash $HOME/.xprofile")
 
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
@@ -758,8 +761,14 @@ awful.rules.rules = {
     --     properties = { sticky = true }},
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-    { rule = { role = "browser" },
-      properties = { tag = "5", } },
+    { rule = { class = "firefox" },
+      properties = { tag = "1", } },
+
+    { rule_any = { class = { "discord", "armcord", "ArmCord" } },
+      properties = { tag = "5", fullscreen = true } },
+
+    { rule_any = { class = { "emacs", "Emacs" } },
+      properties = { tag = "6" } },
 }
 
 -- {{{ Signals
@@ -917,4 +926,3 @@ end)
 --     c:move_to_tag(screen[1].tags[6])
 -- end)
 
-awful.spawn.with_shell("dash $HOME/.xprofile")

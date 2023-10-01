@@ -34,9 +34,9 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-tokyo-night)
 
-(setq
- org-default-notes-file "~/Notes/refile.org"
- initial-buffer-choice org-default-notes-file)
+(setq org-default-notes-file "~/Notes/refile.org")
+
+(setq initial-buffer-choice org-default-notes-file)
 
 
 ;; This determines the style of line numbers in effect. If set to `nil', line

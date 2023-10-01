@@ -9,6 +9,9 @@ artix-pipewire-launcher &
 
 # xset -dpms &
 picom &
+discord-canary &
+tmux new-session -d -s "gravity" &
+firefox &
 # qownnotes &
 # st -e nvim ~/Notes/index.norg &
 # xscreensaver --no-splash &
