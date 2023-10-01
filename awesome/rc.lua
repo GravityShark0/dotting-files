@@ -145,7 +145,7 @@ net_wired = net_widgets.indicator({interface="eth0",
 net_wireless = net_widgets.wireless({
     interface="wlan0",
     popup_position = "bottom_right",
-    onclick = terminal.." -e wpa_gui"})
+    onclick = terminal.." -e doas wpa_cli"})
 -- net_wireless = net_widgets.wired({interface="eth0"})
 
 mytextclock:connect_signal("button::press",
