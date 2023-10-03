@@ -19,7 +19,7 @@ ln -n <file> <config directory>
 - picom (ftbells general animation)
 - tmux 
     -  t-smart-tmux-session-manager
->i wanna replace with abduco
+>i wanna replace with abduco/dvtm
 
 #### other applications that are in other repos
 - suckless terminal
