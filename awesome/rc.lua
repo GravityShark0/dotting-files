@@ -153,7 +153,7 @@ net_wired = net_widgets.indicator({
 net_wireless = net_widgets.wireless({
 	interface = 'wlan0',
 	popup_position = 'bottom_right',
-	onclick = terminal .. ' -e doas wpa_cli',
+	onclick = terminal .. ' -e doas rfkill unblock wlan && wpa_cli',
 })
 -- net_wireless = net_widgets.wired({interface="eth0"})
 
