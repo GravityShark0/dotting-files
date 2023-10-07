@@ -9,7 +9,7 @@ artix-pipewire-launcher &
 
 # xset -dpms &
 picom &
-discord-canary &
+discord &
 tmux new-session -d -s "gravity" &
 firefox &
 # qownnotes &
