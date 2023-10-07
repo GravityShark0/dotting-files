@@ -11,13 +11,15 @@ ln -n <file> <config directory>
 - doom emacs
 - fish shell
     - zoxide
+> i wanna replace with ya shell
+
 - firefox
 - joshuto
 - keyd
 - picom (ftbells general animation)
 - tmux 
     -  t-smart-tmux-session-manager
-
+>i wanna replace with abduco/dvtm
 
 #### other applications that are in other repos
 - suckless terminal
