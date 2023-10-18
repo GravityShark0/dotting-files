@@ -451,6 +451,21 @@ globalkeys = gears.table.join(
 		group = 'launcher',
 	}),
 
+	-- Brightness
+	awful.key({}, 'XF86MonBrightnessUp', function()
+		awful.spawn('monitorlight +5')
+	end, {
+		description = 'increase monitor brightness',
+		group = 'screen',
+	}),
+
+	awful.key({}, 'XF86MonBrightnessDown', function()
+		awful.spawn('monitorlight +-5')
+	end, {
+		description = 'decrease monitor brightness',
+		group = 'screen',
+	}),
+
 	awful.key(
 		{ modkey, 'Control' },
 		'r',
