@@ -295,7 +295,7 @@ awful.screen.connect_for_each_screen(function(s)
 			s.mypromptbox,
 		},
 		s.mytasklist, -- Middle widget
-		{ -- Right widgets
+		{       -- Right widgets
 			layout = wibox.layout.fixed.horizontal,
 			-- mykeyboardlayout,
 			wibox.widget.systray(),
@@ -550,9 +550,9 @@ local function resize_client(c, direction)
 		awful.layout.get(mouse.screen) == awful.layout.suit.floating
 		or (c and c.floating)
 	then
-		if direction == 'up' then
+		if direction == 'down' then
 			c:relative_move(0, 0, 0, floating_resize_amount)
-		elseif direction == 'down' then
+		elseif direction == 'up' then
 			c:relative_move(0, 0, 0, -floating_resize_amount)
 		elseif direction == 'left' then
 			c:relative_move(0, 0, -floating_resize_amount, 0)
@@ -871,7 +871,7 @@ awful.rules.rules = {
 	--     properties = { sticky = true }},
 
 	-- Set Firefox to always map on the tag named "2" on screen 1.
-	{ rule = { class = 'firefox' }, properties = { tag = '1' } },
+	-- { rule = { class = 'firefox' }, properties = { tag = '1' } },
 
 	{
 		rule_any = { class = { 'discord', 'armcord', 'ArmCord' } },

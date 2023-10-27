@@ -11,7 +11,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font = 'Ubuntu Nerd Font 8'
+theme.font = 'Ubuntu Nerd Font ' .. dpi(10)
 
 theme.bg_normal = '#1b1a29'
 theme.bg_focus = '#302d41'
@@ -48,9 +48,9 @@ theme.border_marked = '#91231c'
 -- Generate taglist squares:
 local taglist_square_size = dpi(4)
 theme.taglist_squares_sel =
-	theme_assets.taglist_squares_sel(taglist_square_size, theme.fg_normal)
+    theme_assets.taglist_squares_sel(taglist_square_size, theme.fg_normal)
 theme.taglist_squares_unsel =
-	theme_assets.taglist_squares_unsel(taglist_square_size, theme.fg_normal)
+    theme_assets.taglist_squares_unsel(taglist_square_size, theme.fg_normal)
 
 -- Variables set for theming notifications:
 -- notification_font
@@ -119,7 +119,7 @@ theme.layout_cornerse = themes_path .. 'default/layouts/cornersew.png'
 
 -- Generate Awesome icon:
 theme.awesome_icon =
-	theme_assets.awesome_icon(theme.menu_height, theme.bg_focus, theme.fg_focus)
+    theme_assets.awesome_icon(theme.menu_height, theme.bg_focus, theme.fg_focus)
 
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
